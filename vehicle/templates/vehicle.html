@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+{% from 'modal-macro.html' import show_modal %}
+{% set active_page = "vehicle" %}
+{% block title %}
+    Vehicle page
+{% endblock %}
+{% block content %}
+    <br/>
+    <div class="container" style="padding-top: 3%">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-sm btn-primary" href="{{ url_for('vehicle.create_vehicle') }}"><i class="fa fa-plus"
+                                                                                                  aria-hidden="true"></i>
+                Add Vehicle</a>
+        </div>
+        <br/>
+        <div id="table"></div>
+    </div>
+    <!-- Modal -->
+    {{ show_modal("deleteModal", "Delete Vehicle", "Do you want to continue delete this vehicle? Vehicle no : <strong><span id=\"deleteId\"></span></strong>?") }}
+    <script>
+        $("#deleteModal").on('shown.bs.modal', function (e) {
+            console.log("event::", e);
+            let url = $(e.relatedTarget).data('url');
+            $('#deleteModalContinue').attr("href", url);
+            let deleteId = url.split('/').pop();
+            $('#deleteId').text(deleteId);
+        });
+
+        const updateUrl = (prev, query) => {
+            return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+        };
+
+        new gridjs.Grid({
+            columns: [
+                {id: 'frame_no', name: 'Frame Number'},
+                {id: 'engine_no', name: 'Engine Number'},
+                {id: 'model', name: 'Model'},
+                {id: 'status', name: 'Status', sort: false},
+                {id: 'description', name: 'Description', sort: false},
+                {id: 'vehicle_type', name: 'Vehicle Type', sort: false},
+                {id: 'dealer', name: 'Dealer'},
+                {id: 'delivery_chellan_no', name: 'Delivery Chellan no', sort: false},
+                {id: 'comments', name: 'Comments', sort: false},
+                {id: 'GST', name: 'GST', sort: false},
+                {id: 'action', name: 'Action', sort: false, formatter: (cell, row) => {
+            return gridjs.html(`<a class="btn btn-sm btn-info"
+                           href="/api/v1/vehicle/update/${row.cells[0].data}"><i
+                                class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                        <a class="btn btn-sm btn-danger" href="#"
+                           data-url="/api/v1/vehicle/delete/${row.cells[0].data}"
+                           data-toggle="modal" data-target="#deleteModal" id="deleteModalId"><i
+                                class="fa fa-trash" aria-hidden="true"></i> Delete</a>`)
+        }}
+            ],
+            server: {
+                url: '/api/v1/vehicle/data',
+                then: results => results.data,
+                total: results => results.total,
+            },
+            search: {
+                enabled: true,
+                server: {
+                    url: (prev, search) => {
+                        return updateUrl(prev, {search});
+                    },
+                },
+            },
+            sort: {
+                enabled: true,
+                multiColumn: true,
+                server: {
+                    url: (prev, columns) => {
+                        const columnIds = ['frame_no', 'engine_no', 'model', 'dealer', 'status'];
+                        const sort = columns.map(col => (col.direction === 1 ? '+' : '-') + columnIds[col.index]);
+                        return updateUrl(prev, {sort});
+                    },
+                },
+            },
+            pagination: {
+                enabled: true,
+                server: {
+                    url: (prev, page, limit) => {
+                        return updateUrl(prev, {start: page * limit, length: limit});
+                    },
+                },
+            },
+            fixedHeader: true,
+            resizable: true,
+            style: {
+                table: {
+                    'white-space': 'nowrap'
+                }
+            },
+        }).render(document.getElementById('table'));
+    </script>
+{% endblock %}
+<!-- Vehicle status available-->
+<!--
+if the vehicle status is delivered or register-completed then show the reg_no & date from booking table
+-->

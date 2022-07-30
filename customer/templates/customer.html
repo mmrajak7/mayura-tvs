@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+{% from 'modal-macro.html' import show_modal %}
+{% set active_page = "customer" %}
+{% block title %}
+    Customer page
+{% endblock %}
+{% block content %}
+    <br/>
+    <div class="container" style="padding-top: 3%">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-sm btn-primary" href="{{ url_for('customer.create_customer') }}"><i class="fa fa-plus"
+                                                                                                  aria-hidden="true"></i>
+                Add Customer</a>
+        </div>
+        <br/>
+        <div id="table"></div>
+    </div>
+    <!-- Modal -->
+    {{ show_modal("deleteModal", "Delete Vehicle", "Do you want to continue delete this customer? Customer no : <strong><span id=\"deleteId\"></span></strong>?") }}
+    <script>
+        $("#deleteModal").on('shown.bs.modal', function (e) {
+            console.log("event::", e);
+            let url = $(e.relatedTarget).data('url');
+            $('#deleteModalContinue').attr("href", url);
+            let deleteId = url.split('/').pop();
+            $('#deleteId').text(deleteId);
+        });
+
+        const updateUrl = (prev, query) => {
+            return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+        };
+
+        new gridjs.Grid({
+            columns: [
+                {id: 'customer_no', name: 'Customer Number'},
+                {id: 'customer_name', name: 'Customer Name'},
+                {id: 'email', name: 'Email'},
+                {id: 'dob', name: 'DOB', sort: false},
+                {id: 'mobile1', name: 'Mobile1', sort: false},
+                {id: 'mobile2', name: 'Mobile2', sort: false},
+                {id: 'mobile3', name: 'Mobile3', sort: false},
+                {id: 'comment', name: 'Comment', sort: false},
+                {id: 'GST', name: 'GST', sort: false},
+                {id: 'city', name: 'City', sort: false},
+                {id: 'street', name: 'Street', sort: false},
+                {id: 'pincode', name: 'Pincode', sort: false},
+                {id: 'action', name: 'Action', sort: false, formatter: (cell, row) => {
+            return gridjs.html(`<a class="btn btn-sm btn-info"
+                           href="/api/v1/customer/update/${row.cells[0].data}"><i
+                                class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                        <a class="btn btn-sm btn-danger" href="#"
+                           data-url="/api/v1/customer/delete/${row.cells[0].data}"
+                           data-toggle="modal" data-target="#deleteModal" id="deleteModalId"><i
+                                class="fa fa-trash" aria-hidden="true"></i> Delete</a>`)
+        }}
+            ],
+            server: {
+                url: '/api/v1/customer/data',
+                then: results => results.data,
+                total: results => results.total,
+            },
+            search: {
+                enabled: true,
+                server: {
+                    url: (prev, search) => {
+                        return updateUrl(prev, {search});
+                    },
+                },
+            },
+            sort: {
+                enabled: true,
+                multiColumn: true,
+                server: {
+                    url: (prev, columns) => {
+                        const columnIds = ['customer_no', 'customer_name', 'email'];
+                        const sort = columns.map(col => (col.direction === 1 ? '+' : '-') + columnIds[col.index]);
+                        return updateUrl(prev, {sort});
+                    },
+                },
+            },
+            pagination: {
+                enabled: true,
+                server: {
+                    url: (prev, page, limit) => {
+                        return updateUrl(prev, {start: page * limit, length: limit});
+                    },
+                },
+            },
+            fixedHeader: true,
+            resizable: true,
+            style: {
+                table: {
+                    'white-space': 'nowrap'
+                }
+            },
+        }).render(document.getElementById('table'));
+    </script>
+{% endblock %}

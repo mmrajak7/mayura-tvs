@@ -1,0 +1,231 @@
+{% extends 'layout.html' %}
+{% from 'modal-macro.html' import show_modal %}
+{% set active_page = "booking" %}
+{% block title %}
+    Booking page
+{% endblock %}
+{% block content %}
+    <div class="container" style="padding-top: 3%">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a class="btn btn-sm btn-primary" href="{{ url_for('booking.create_booking') }}"><i class="fa fa-plus"
+                                                                                                aria-hidden="true"></i>
+                Add Booking</a>
+        </div>
+        <br/>
+        <div id="table"></div>
+    </div>
+    <!-- Modal -->
+    {{ show_modal("deleteModal", "Delete Booking", "Do you want to continue delete this booking? Booking no : <strong><span id=\"deleteId\"></span></strong>?") }}
+    {{ show_modal("cancelModal", "Cancel Booking", "Do you want to continue cancel this booking? Booking no : <strong><span id=\"cancelId\"></span></strong>?") }}
+    <script>
+        $("#deleteModal").on('shown.bs.modal', function (e) {
+            console.log("event::", e);
+            let url = $(e.relatedTarget).data('url');
+            $('#deleteModalContinue').attr("href", url);
+            let deleteId = url.split('/').pop();
+            $('#deleteId').text(deleteId);
+        });
+        $("#cancelModal").on('shown.bs.modal', function (e) {
+            console.log("event::", e);
+            let url = $(e.relatedTarget).data('url');
+            $('#cancelModalContinue').attr("href", url);
+            let deleteId = url.split('/').pop();
+            $('#cancelId').text(deleteId);
+        });
+
+        const updateUrl = (prev, query) => {
+            return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+        };
+
+        new gridjs.Grid({
+            columns: [
+                {id: 'booking_no', name: 'Booking Number'},
+                {id: 'booking_date', name: 'Booking Date', sort: false},
+                {id: 'status', name: 'Status'},
+                {id: 'vehicle_registration_no', name: 'Vehicle Registration Number', sort: false},
+                {id: 'invoice_no', name: 'Invoice Number', sort: false, hidden: true},
+                {id: 'rc_issue_date', name: 'RC Issue Date', sort: false, hidden: true},
+                {id: 'delivery_date', name: 'Delivery Date', sort: false, hidden: true},
+                {id: 'tools', name: 'Tools', sort: false, hidden: true},
+                {id: 'helmet', name: 'Helmet', sort: false, hidden: true},
+                {id: 'accessories', name: 'Accessories', sort: false, hidden: true},
+                {id: 'exchange_vehicle_frame_no', name: 'Exchange Vehicle Frame Number', sort: false, hidden: true},
+                {id: 'frame_no', name: 'Frame Number', sort: false},
+                {id: 'customer_no', name: 'Customer Number', sort: false},
+                {id: 'model', name: 'Model'},
+                {id: 'description', name: 'Description', sort: false, hidden: true},
+                {id: 'vehicle_type', name: 'Vehicle Type', sort: false, hidden: true},
+                {id: 'dealer', name: 'Dealer', sort: false, hidden: true},
+                {id: 'delivery_chellan_no', name: 'Delivery Chellan no', sort: false, hidden: true},
+                {id: 'comments', name: 'Comments', sort: false, hidden: true},
+                {id: 'GST', name: 'GST', sort: false, hidden: true},
+                {id: 'last_updated_by', name: 'Last update by', sort: false, hidden: true},
+                {id: 'registration_date', name: 'Registration Date', sort: false, hidden: true},
+                {
+                    id: 'action', name: 'Action', sort: false, formatter: (cell, row) => {
+                        return gridjs.html(`
+                        <a class="btn btn-sm btn-primary" data-toggle="collapse" href="#booking${row.cells[0].data}" role="button" aria-expanded="false" aria-controls="booking${row.cells[0].data}">
+                            more info
+                        </a>
+                        <a class="btn btn-sm btn-info"
+                           href="/api/v1/booking/update/${row.cells[0].data}"><i
+                                class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                        <a class="btn btn-sm btn-danger" href="#"
+                           data-url="/api/v1/booking/cancel/${row.cells[0].data}"
+                           data-toggle="modal" data-target="#cancelModal" id="cancelModalId"><i
+                                class="fa fa-trash" aria-hidden="true"></i> Cancel</a>
+                        <a class="btn btn-sm btn-danger" href="#"
+                           data-url="/api/v1/booking/delete/${row.cells[0].data}"
+                           data-toggle="modal" data-target="#deleteModal" id="deleteModalId"><i
+                                class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                        <div class="collapse" id="booking${row.cells[0].data}">
+                          <div class="container">
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>invoice no: ${row.cells[4].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>RC_issue_date: ${row.cells[5].data}</strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>Delivery date: ${row.cells[6].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>Accessories: ${row.cells[9].data}</strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>Tools: ${row.cells[7].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>Helmet: ${row.cells[8].data}</strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>Exchange Vehicle Frame no: ${row.cells[9].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>Description: ${row.cells[13].data}</strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>Vehicle type: ${row.cells[14].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>Dealer: ${row.cells[15].data}</strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>Comments: ${row.cells[16].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>GST: ${row.cells[17].data}</strong>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm">
+                              <strong>Last update by: ${row.cells[18].data}</strong>
+                            </div>
+                            <div class="col-sm">
+                              <strong>Registration Date: ${row.cells[19].data}</strong>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                    `)
+                    }
+                }
+            ],
+            server: {
+                url: '/api/v1/booking/data',
+                then: results => results.data,
+                total: results => results.total,
+            },
+            search: {
+                enabled: true,
+                server: {
+                    url: (prev, search) => {
+                        return updateUrl(prev, {search});
+                    },
+                },
+            },
+            sort: {
+                enabled: true,
+                multiColumn: true,
+                server: {
+                    url: (prev, columns) => {
+                        const columnIds = ['booking_no', 'model', 'frame_no', 'status'];
+                        const sort = columns.map(col => (col.direction === 1 ? '+' : '-') + columnIds[col.index]);
+                        return updateUrl(prev, {sort});
+                    },
+                },
+            },
+            pagination: {
+                enabled: true,
+                server: {
+                    url: (prev, page, limit) => {
+                        return updateUrl(prev, {start: page * limit, length: limit});
+                    },
+                },
+            },
+            fixedHeader: true,
+            resizable: true,
+            style: {
+                table: {
+                    'white-space': 'nowrap'
+                }
+            },
+        }).render(document.getElementById('table'));
+    </script>
+{% endblock %}
+
+<!-- attributes to show in table
+booking_no
+booking_date
+status-concatenate with vehicle status
+customer_name
+model
+description
+frame_no
+remaining-more info
+buttons=> more Info, cancel-booking(with confirmation popup), action(Registration_Completed, Delivered)
+-->
+
+<!-- Add booking
+booking_no => auto generate
+customer_name & number =>
+frame_no => optional
+button => book, cancel
+
+vehicle status update to booked, booking status open
+-->
+
+<!-- Vehicle status
+Available
+Booked
+Registration_Completed
+Delivered
+-->
+
+<!-- Booking status
+Open
+Cancel
+Completed
+-->
+
+<!--
+click Action
+
+Show vehicle status dropdown
+If vehicle in Booked status then we show
+1) Registration_Completed => reg_no(Always Caps), reg_date button=> submit,close
+2) Delivered =>no input required
+
+-->
+

@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+{% set active_page = "misc" %}
+{% block title %}
+    Pos page
+{% endblock %}
+{% block content %}
+    <br/>
+    <div class="container" style="padding-top: 3%">
+        <br/>
+        <div id="table"></div>
+    </div>
+    <script>
+        const updateUrl = (prev, query) => {
+            return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+        };
+
+        new gridjs.Grid({
+            columns: [
+                {id: 'pos_no', name: '#'},
+                {id: 'tran_date', name: 'Tran Date'},
+                {id: 'batch_no', name: 'Batch No', sort: false},
+                {id: 'card_type', name: 'Card Type'},
+                {id: 'ti', name: 'Policy Company', sort: false},
+                {id: 'card_no', name: 'Date', sort: false},
+                {id: 'approve_code', name: 'Approve Code', sort: false},
+                {id: 'gross_amt', name: 'Gross Amt', sort: false},
+                {id: 'mdr', name: 'MDR', sort: false},
+                {id: 'gst', name: 'GST', sort: false},
+                {id: 'net_amount', name: 'Net Amount', sort: false},
+                {id: 'process_date', name: 'Process Date', sort: false},
+                {id: 'frame_no', name: 'Frame no'}
+            ],
+            server: {
+                url: '/api/v1/misc/pos/data',
+                then: results => results.data,
+                total: results => results.total,
+            },
+            search: {
+                enabled: true,
+                server: {
+                    url: (prev, search) => {
+                        return updateUrl(prev, {search});
+                    },
+                },
+            },
+            sort: {
+                enabled: true,
+                multiColumn: true,
+                server: {
+                    url: (prev, columns) => {
+                        const columnIds = ['pos_no', 'tran_date', 'card_type', 'frame_no'];
+                        const sort = columns.map(col => (col.direction === 1 ? '+' : '-') + columnIds[col.index]);
+                        return updateUrl(prev, {sort});
+                    },
+                },
+            },
+            pagination: {
+                enabled: true,
+                limit: 25,
+                server: {
+                    url: (prev, page, limit) => {
+                        return updateUrl(prev, {start: page * limit, length: limit});
+                    },
+                },
+            },
+            fixedHeader: true,
+            resizable: true,
+            style: {
+                table: {
+                    'white-space': 'nowrap'
+                }
+            },
+        }).render(document.getElementById('table'));
+    </script>
+{% endblock %}
+<!-- Vehicle status available-->
+<!--
+if the vehicle status is delivered or register-completed then show the reg_no & date from booking table
+-->

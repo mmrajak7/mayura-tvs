@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+{% set active_page = "customer" %}
+{% block title %}
+    Create customer page
+{% endblock %}
+
+{% block content %}
+    <body>
+    <div class="container" style="padding-top: 3%">
+        <form method="POST" class="form-signin">
+            {{ form.hidden_tag() }}
+            <h1 class="h3 mb-3 font-weight-normal text-center">
+                Update Customer
+            </h1>
+            <div class="m-4">
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.customer_name.label(class="form-label") }}
+                        {{ form.customer_name(class="form-control", placeholder="Customer Name") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control", placeholder="Email") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.dob.label(class="form-label") }}
+                        {{ form.dob(class="form-control", placeholder="DOB") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.mobile1.label(class="form-label") }}
+                        {{ form.mobile1(class="form-control", placeholder="Mobile1") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.mobile2.label(class="form-label") }}
+                        {{ form.mobile2(class="form-control", placeholder="Mobile2") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.mobile3.label(class="form-label") }}
+                        {{ form.mobile3(class="form-control", placeholder="Mobile3") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.GST.label(class="form-label") }}
+                        {{ form.GST(class="form-control", placeholder="GST") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.comment.label(class="form-label") }}
+                        {{ form.comment(class="form-control", placeholder="Comment") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-5">
+                        {{ form.city.label(class="form-label") }}
+                        {{ form.city(class="form-control", placeholder="City") }}
+                    </div>
+                    <div class="col-5">
+                        {{ form.street.label(class="form-label") }}
+                        {{ form.street(class="form-control", placeholder="Street") }}
+                    </div>
+                    <div class="col-2">
+                        {{ form.pincode.label(class="form-label") }}
+                        {{ form.pincode(class="form-control", placeholder="Pincode") }}
+                    </div>
+                </div>
+                <div class="text-center">
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                    <a class="btn btn-lg btn-secondary" href="{{ url_for('customer.view_customer') }}">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    </body>
+{% endblock %}

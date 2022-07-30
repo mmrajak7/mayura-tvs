@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+{% set active_page = "booking" %}
+{% block title %}
+    Update Booking page
+{% endblock %}
+
+{% block content %}
+    <body>
+    {% if form.errors %}
+        {% for error in form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ error }} is not valid!!!
+            </div>
+        {% endfor %}
+{% endif %}
+    <div class="container" style="padding-top: 3%">
+        <form method="POST" class="form-signin">
+            {{ form.hidden_tag() }}
+            <h1 class="h3 mb-3 font-weight-normal text-center">
+                Update Booking
+            </h1>
+            <div class="m-4">
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.booking_date.label(class="form-label") }}
+                        {{ form.booking_date(class="form-control", placeholder="Booking date") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.vehicle_registration_no.label(class="form-label") }}
+                        {{ form.vehicle_registration_no(class="form-control", placeholder="Vehicle Registration number") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.frame_no.label(class="form-label") }}
+                        {{ form.frame_no(class="form-control vehicleAutoComplete", placeholder="type to search vehicle....", autocomplete="off", id="frame_no") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.customer_no.label(class="form-label") }}
+                        {{ form.customer_no(class="form-control customerAutoComplete", placeholder="type to search customer...", autocomplete="off", id="customer_no") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.delivery_date.label(class="form-label") }}
+                        {{ form.delivery_date(class="form-control", placeholder="Delivery date") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.rc_issue_date.label(class="form-label") }}
+                        {{ form.rc_issue_date(class="form-control", placeholder="RC Issue date") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.status.label(class="form-label") }}
+                        {{ form.status(class="form-control", placeholder="Select status") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.registration_date.label(class="form-label") }}
+                        {{ form.registration_date(class="form-control", placeholder="Registration Date") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-4">
+                        {{ form.tools.label(class="form-label") }}
+                        {{ form.tools }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.helmet.label(class="form-label") }}
+                        {{ form.helmet }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.accessories.label(class="form-label") }}
+                        {{ form.accessories }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", placeholder="Description") }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.vehicle_type.label(class="form-label") }}
+                        {{ form.vehicle_type(class="form-control", placeholder="Vehicle Type") }}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-4">
+                        {{ form.GST.label(class="form-label") }}
+                        {{ form.GST(class="form-control", placeholder="GST") }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.comments.label(class="form-label") }}
+                        {{ form.comments(class="form-control", placeholder="Comments") }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.delivery_chellan_no.label(class="form-label") }}
+                        {{ form.delivery_chellan_no(class="form-control", placeholder="Delivery Chellan number") }}
+                    </div>
+                </div>
+                <br>
+                <div class="text-center">
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                    <a class="btn btn-lg btn-secondary" href="{{ url_for('booking.view_booking') }}">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        $('#customer_no').autoComplete({
+            resolver: 'custom',
+            events: {
+                search: function (qry, callback) {
+                    // let's do a custom ajax call
+                    $.ajax('{{ url_for("booking.customer_search") }}',
+                        {
+                            data: {'qry': qry}
+                        }
+                    ).done(function (res) {
+                        console.log("res::",res);
+                        callback(res.matching_results)
+                    });
+                }
+            }
+        });
+        $('#frame_no').autoComplete({
+            resolver: 'custom',
+            events: {
+                search: function (qry, callback) {
+                    // let's do a custom ajax call
+                    $.ajax('{{ url_for("booking.vehicle_search") }}',
+                        {
+                            data: {'qry': qry}
+                        }
+                    ).done(function (res) {
+                        console.log("vehicle res::",res);
+                        callback(res.matching_results)
+                    });
+                }
+            }
+        });
+        $(document).ready(function() {
+            $('#customer_no').val({{ customer_no }})
+            $('input[name="customer_no"]').val({{ customer_no }})
+            $('#frame_no').val('{{ frame_no }}')
+            $('input[name="frame_no"]').val('{{ frame_no }}')
+        });
+    </script>
+    </body>
+{% endblock %}

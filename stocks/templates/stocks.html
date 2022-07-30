@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% set active_page = "stocks" %}
+{% block title %}
+    Stocks page
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>File Upload</h1>
+        <form action="{{ url_for('stocks.view_stocks') }}" class="dropzone" id="uploadDropzone">
+        </form>
+    </div>
+    <script>
+        Dropzone.options.uploadDropzone = {
+            maxFilesize: 2, // MB
+            acceptedFiles: ".xlsx",
+            maxFiles: 1,
+            init: function () {
+                this.on("sending", function (file, xhr, data) {
+                    console.log("file sending...", file)
+                    if (file.fullPath) {
+                        console.log("file sending path..", file.fullPath)
+                        data.append("fullPath", file.fullPath);
+                    }
+                });
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% set active_page = "invoice" %}
+{% from 'macros.html' import data_table %}
+
+{% block title %}
+    Invoice page
+{% endblock %}
+{% block content %}
+    {{ item_name }}
+    {{ data_table(headings, items) }}
+{% endblock %}
+
+
+<!--
+Add invoice_ref_no in table
+-->
