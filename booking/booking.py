@@ -91,7 +91,7 @@ def create_booking():
                                     rc_issue_date=booking_form.rc_issue_date.data,
                                     tools=booking_form.tools.data,
                                     vehicle_registration_no=booking_form.vehicle_registration_no.data,
-                                    last_updated_by=current_user.get_id()
+                                    last_updated_by=current_user.id()
                                     )
         print(booking_to_create)
         db.session.add(booking_to_create)
@@ -128,7 +128,7 @@ def update_booking(id):
         booking_by_id.status = update_booking_form.status.data
         booking_by_id.delivery_date = update_booking_form.delivery_date.data
         booking_by_id.rc_issue_date = update_booking_form.rc_issue_date.data
-        booking_by_id.last_updated_by = current_user.get_id()
+        booking_by_id.last_updated_by = current_user.id()
         booking_by_id.registration_date = update_booking_form.registration_date.data
         db.session.commit()
         flash(f'Booking {id} updated successfully!', category='success')
