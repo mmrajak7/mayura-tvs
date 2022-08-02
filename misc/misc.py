@@ -48,7 +48,8 @@ def view_bank_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Bank.bank_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
@@ -99,7 +100,8 @@ def view_cashbook_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Cashbook.cashbook_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
@@ -149,7 +151,8 @@ def view_pos_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Pos.pos_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
@@ -198,7 +201,8 @@ def view_exchange_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Exchange.exchange_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
@@ -249,7 +253,8 @@ def view_insurance_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Insurance.insurance_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
@@ -298,7 +303,8 @@ def view_soa_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Soa.soa_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)

@@ -14,13 +14,17 @@
             </h1>
             <div class="m-4">
                 <div class="row g-3">
-                    <div class="col-6">
+                    <div class="col-4">
                         {{ form.engine_no.label(class="form-label") }}
                         {{ form.engine_no(class="form-control", placeholder="Engine no") }}
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         {{ form.dealer.label(class="form-label") }}
                         {{ form.dealer(class="form-control", placeholder="Dealer") }}
+                    </div>
+                    <div class="col-4">
+                        {{ form.status.label(class="form-label") }}
+                        {{ form.status(class="form-control", placeholder="Status") }}
                     </div>
                 </div>
                 <div class="row g-3">
@@ -63,3 +67,11 @@
     </div>
     </body>
 {% endblock %}
+<!--
+Engine_no,
+model,
+vehicle type
+dealer
+
+add columns based on whatsapp screenshot
+-->

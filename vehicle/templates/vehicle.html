@@ -5,8 +5,7 @@
     Vehicle page
 {% endblock %}
 {% block content %}
-    <br/>
-    <div class="container" style="padding-top: 3%">
+    <div style="padding: 3% 2% 2% 2%">
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <a class="btn btn-sm btn-primary" href="{{ url_for('vehicle.create_vehicle') }}"><i class="fa fa-plus"
                                                                                                   aria-hidden="true"></i>
@@ -16,7 +15,7 @@
         <div id="table"></div>
     </div>
     <!-- Modal -->
-    {{ show_modal("deleteModal", "Delete Vehicle", "Do you want to continue delete this vehicle? Vehicle no : <strong><span id=\"deleteId\"></span></strong>?") }}
+    {{ show_modal("deleteModal", "Delete Vehicle", "Do you want to continue delete this vehicle no : <strong><span id=\"deleteId\"></span></strong>?") }}
     <script>
         $("#deleteModal").on('shown.bs.modal', function (e) {
             console.log("event::", e);
@@ -97,4 +96,18 @@
 <!-- Vehicle status available-->
 <!--
 if the vehicle status is delivered or register-completed then show the reg_no & date from booking table
+remove GST field
+vehicle type dropdown
+dealer dropdown ()
+-->
+
+<!--
+Customer scrren
+remove enter show only the verb (all the screen)
+Remove GST
+Move street(change to Address line 1) then city(Address line 2)
+-->
+
+<!-- Dashboard
+
 -->

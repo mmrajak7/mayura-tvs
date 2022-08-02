@@ -2,10 +2,12 @@ from app import db
 from sqlalchemy import DateTime
 from flask_login import UserMixin
 
+from models.customer import Customer
+
 
 class Booking(db.Model, UserMixin):
     booking_no = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    accessories = db.Column(db.String(length=100), nullable=True)
+    accessories = db.Column(db.BOOLEAN(), nullable=True)
     booking_date = db.Column(DateTime, nullable=False)
     delivery_chellan_no = db.Column(db.String(length=50), nullable=True)
     delivery_date = db.Column(DateTime, nullable=True)
@@ -17,15 +19,16 @@ class Booking(db.Model, UserMixin):
     vehicle_type = db.Column(db.String(length=60), nullable=False)
     comments = db.Column(db.String(length=250), nullable=True)
     GST = db.Column(db.String(length=60), nullable=True)
-    helmet = db.Column(db.String(length=60), nullable=True)
+    helmet = db.Column(db.BOOLEAN(), nullable=True)
     invoice_no = db.Column(db.String(length=60), nullable=True)
     model = db.Column(db.String(length=60), nullable=False)
     rc_issue_date = db.Column(DateTime, nullable=True)
     status = db.Column(db.String(length=60), nullable=False)
-    tools = db.Column(db.String(length=60), nullable=True)
+    tools = db.Column(db.BOOLEAN(), nullable=True)
     vehicle_registration_no = db.Column(db.String(length=60), nullable=True)
     last_updated_by = db.Column(db.String(length=100))
     registration_date = db.Column(DateTime, nullable=True)
+    customer = db.relationship(Customer, lazy="joined", innerjoin=True)
 
     def __repr__(self):
         return f'<Booking: {self.booking_no}>'
@@ -52,5 +55,6 @@ class Booking(db.Model, UserMixin):
             'tools': self.tools,
             'vehicle_registration_no': self.vehicle_registration_no,
             'dealer': self.dealer,
-            'registration_date': self.registration_date and self.registration_date.strftime("%m/%d/%Y")
+            'registration_date': self.registration_date and self.registration_date.strftime("%m/%d/%Y"),
+            'customer_name': self.customer.to_dict().get('customer_name')
         }

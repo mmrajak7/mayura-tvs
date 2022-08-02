@@ -8,10 +8,17 @@ app = Flask(__name__)
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://u106031583_Rajak12345:Rajak12345@sql222.main-hosting.eu:3306/u106031583_mayura'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_POOL_SIZE'] = 30
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 60
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 50
+app.config['SQLALCHEMY_MAX_OVERFLOW'] = 0
 app.config['SQLALCHEMY_POOL_PRE_PING'] = True
+
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_size': 20,
-    'pool_recycle': 280
+    'pool_size': 30,
+    'pool_recycle': 50,
+    'pool_timeout': 60,
+    'max_overflow': 0
 }
 app.config['SECRET_KEY'] = '0c57258251118bbb97c1e20f'
 app.config['UPLOAD_EXTENSIONS'] = ['.xlsx']
@@ -68,6 +75,13 @@ def forbidden_error(e):
 @app.errorhandler(413)
 def too_large(e):
     return render_template("413.html", messaage=e)
+
+
+@app.template_filter()
+def pretty_boolean(value):
+    if value:
+        return True
+    return False
 
 
 if __name__ == '__main__':

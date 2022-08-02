@@ -23,8 +23,7 @@ class Invoice(db.Model, UserMixin):
     GST = db.Column(db.String(length=60), nullable=False)
     handling_cost = db.Column(db.String(length=60), nullable=False)
     insurance_cost = db.Column(db.String(length=60), nullable=False)
-    invoice_date = db.Column(DateTime, default=datetime.now)
-    invoice_no = db.Column(db.Integer(), primary_key=True)
+    payment_no = db.Column(db.Integer(), primary_key=True)
     invoice_path = db.Column(db.String(length=250), nullable=False)
     last_update_date = db.column(DateTime, default=datetime.now, onupdate=datetime.now)
     mode_of_payment = db.Column(db.String(length=60), nullable=False)
@@ -33,4 +32,4 @@ class Invoice(db.Model, UserMixin):
     vehicle_price = db.Column(db.String(length=50), nullable=False)
 
     def __repr__(self):
-        return f'<Invoice: {self.invoice_no}>. Booking : {self.booking_no}'
+        return f'<Invoice: {self.payment_no}>. Booking : {self.booking_no}'

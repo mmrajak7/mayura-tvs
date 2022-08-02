@@ -24,7 +24,7 @@ def view_booking_data():
     # search filter
     search = request.args.get('search')
     if search:
-        query = query.filter(db.or_(
+        query = query(db.joinedload(Booking.customer_no)).filter(db.or_(
             Booking.booking_no.like(f'%{search}%'),
             Booking.model.like(f'%{search}%'),
             Booking.frame_no.like(f'%{search}%'),
@@ -41,18 +41,21 @@ def view_booking_data():
             name = s[1:]
             if name not in ['booking_no', 'model', 'frame_no', 'status']:
                 name = 'booking_no'
-            col = getattr(Vehicle, name)
+            col = getattr(Booking, name)
             if direction == '-':
                 col = col.desc()
             order.append(col)
         if order:
             query = query.order_by(*order)
+    else:
+        query = query.order_by(Booking.booking_no.desc())
 
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
     if start != -1 and length != -1:
         query = query.offset(start).limit(length)
+    query.options(db.joinedload(Booking.customer_no))
     print(query)
     return {
         'data': [bookings.to_dict() for bookings in query],
@@ -170,6 +173,8 @@ def cancel_booking(id):
     try:
         booking = Booking.query.filter(Booking.booking_no == id).first()
         booking.status = "Cancel"
+        vehicle = Vehicle.query.filter(Vehicle.frame_no == booking.frame_no).first()
+        vehicle.status = "Available"
         db.session.commit()
         flash(f'Booking {id} canceled successfully!', category='success')
     except Exception as e:

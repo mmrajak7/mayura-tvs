@@ -45,7 +45,8 @@ def view_vehicle_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
-
+    else:
+        query = query.order_by(Vehicle.frame_no.desc())
     # pagination
     start = request.args.get('start', type=int, default=-1)
     length = request.args.get('length', type=int, default=-1)
@@ -68,7 +69,7 @@ def create_vehicle():
                                     dealer=vehicle_form.dealer.data,
                                     delivery_chellan_no=vehicle_form.delivery_chellan_no.data,
                                     description=vehicle_form.description.data,
-                                    status="Available",
+                                    status=vehicle_form.status,
                                     model=vehicle_form.model.data,
                                     comments=vehicle_form.comments.data,
                                     GST=vehicle_form.GST.data,

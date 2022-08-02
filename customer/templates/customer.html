@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
     <br/>
-    <div class="container" style="padding-top: 3%">
+    <div style="padding: 3% 2% 2% 2%">
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <a class="btn btn-sm btn-primary" href="{{ url_for('customer.create_customer') }}"><i class="fa fa-plus"
                                                                                                   aria-hidden="true"></i>
@@ -16,7 +16,7 @@
         <div id="table"></div>
     </div>
     <!-- Modal -->
-    {{ show_modal("deleteModal", "Delete Vehicle", "Do you want to continue delete this customer? Customer no : <strong><span id=\"deleteId\"></span></strong>?") }}
+    {{ show_modal("deleteModal", "Delete Vehicle", "Do you want to continue delete this customer no : <strong><span id=\"deleteId\"></span></strong>?") }}
     <script>
         $("#deleteModal").on('shown.bs.modal', function (e) {
             console.log("event::", e);

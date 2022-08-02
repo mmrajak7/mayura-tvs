@@ -48,6 +48,8 @@ def view_customer_data():
             order.append(col)
         if order:
             query = query.order_by(*order)
+    else:
+        query = query.order_by(Customer.customer_no.desc())
 
     # pagination
     start = request.args.get('start', type=int, default=-1)

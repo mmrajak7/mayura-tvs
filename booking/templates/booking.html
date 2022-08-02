@@ -5,18 +5,24 @@
     Booking page
 {% endblock %}
 {% block content %}
-    <div class="container" style="padding-top: 3%">
+    <div style="padding: 3% 2% 2% 2%">
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <a class="btn btn-sm btn-primary" href="{{ url_for('booking.create_booking') }}"><i class="fa fa-plus"
                                                                                                 aria-hidden="true"></i>
                 Add Booking</a>
+            <select class="form-select show-menu-arrow show-tick selectpicker" aria-label="Default select example" style="margin-left: 1%" id="searchFilter">
+                <option selected>Select search option</option>
+                <option value="Registration_not_completed">Registration_not_completed</option>
+                <option value="Booking_not_alloted">Booking_not_alloted</option>
+                <option value="No_delivery_date">No delivery date</option>
+            </select>
         </div>
         <br/>
         <div id="table"></div>
     </div>
     <!-- Modal -->
-    {{ show_modal("deleteModal", "Delete Booking", "Do you want to continue delete this booking? Booking no : <strong><span id=\"deleteId\"></span></strong>?") }}
-    {{ show_modal("cancelModal", "Cancel Booking", "Do you want to continue cancel this booking? Booking no : <strong><span id=\"cancelId\"></span></strong>?") }}
+    {{ show_modal("deleteModal", "Delete Booking", "Do you want to continue delete this booking no : <strong><span id=\"deleteId\"></span></strong>?") }}
+    {{ show_modal("cancelModal", "Cancel Booking", "Do you want to continue cancel this booking no : <strong><span id=\"cancelId\"></span></strong>?") }}
     <script>
         $("#deleteModal").on('shown.bs.modal', function (e) {
             console.log("event::", e);
@@ -37,12 +43,12 @@
             return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
         };
 
-        new gridjs.Grid({
+        var grid = new gridjs.Grid({
             columns: [
-                {id: 'booking_no', name: 'Booking Number'},
+                {id: 'booking_no', name: '#'},
                 {id: 'booking_date', name: 'Booking Date', sort: false},
                 {id: 'status', name: 'Status'},
-                {id: 'vehicle_registration_no', name: 'Vehicle Registration Number', sort: false},
+                {id: 'vehicle_registration_no', name: 'Registration No', sort: false},
                 {id: 'invoice_no', name: 'Invoice Number', sort: false, hidden: true},
                 {id: 'rc_issue_date', name: 'RC Issue Date', sort: false, hidden: true},
                 {id: 'delivery_date', name: 'Delivery Date', sort: false, hidden: true},
@@ -50,8 +56,12 @@
                 {id: 'helmet', name: 'Helmet', sort: false, hidden: true},
                 {id: 'accessories', name: 'Accessories', sort: false, hidden: true},
                 {id: 'exchange_vehicle_frame_no', name: 'Exchange Vehicle Frame Number', sort: false, hidden: true},
-                {id: 'frame_no', name: 'Frame Number', sort: false},
-                {id: 'customer_no', name: 'Customer Number', sort: false},
+                {id: 'frame_no', name: 'Frame No', sort: false},
+                {id: 'customer_name', name: 'Customer Name', sort: false, hidden: true},
+                {id: 'customer_no', name: 'Customer', sort: false, formatter: (cell, row) => {
+                    return gridjs.html(`${row.cells[13].data} - ${row.cells[12].data}`)
+                    }
+                },
                 {id: 'model', name: 'Model'},
                 {id: 'description', name: 'Description', sort: false, hidden: true},
                 {id: 'vehicle_type', name: 'Vehicle Type', sort: false, hidden: true},
@@ -82,7 +92,7 @@
                           <div class="container">
                           <div class="row">
                             <div class="col-sm">
-                              <strong>invoice no: ${row.cells[4].data}</strong>
+                              <strong>payment no: ${row.cells[4].data}</strong>
                             </div>
                             <div class="col-sm">
                               <strong>RC_issue_date: ${row.cells[5].data}</strong>
@@ -182,6 +192,10 @@
                 }
             },
         }).render(document.getElementById('table'));
+        var selectOption = $('#searchFilter').selectpicker();
+        selectOption.on("changed.bs.select", function(e) {
+            console.log(e)
+    });
     </script>
 {% endblock %}
 
@@ -228,4 +242,23 @@ If vehicle in Booked status then we show
 2) Delivered =>no input required
 
 -->
+<!--
+booking no
+customer name
+model
+customer-mobile1
+status
+-->
+<!--
+Accessories - instead of 1 use Yes or No
+In moreInfo use invoice/no & date
+vehicle-type should be dropdown => scooter(default),motorbike, moped
+remove delete button
+Add button for Registration_not_completed(query based on empty VRN), booking_not_alloted(fetch empty frame number),
+No delivery date(delivery date empty), reset(clear all filteration)
+complete_registration=> vehicle registration number, registration_date, invoice-date and invoice-number (Mandatory).
+-->
 
+<!--
+Misc use from & to date for filtering
+-->
